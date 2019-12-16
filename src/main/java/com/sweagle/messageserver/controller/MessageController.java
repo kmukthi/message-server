@@ -54,5 +54,4 @@ public class MessageController {
 		return messageService.getProbableCountOfMessagesToSendForTheRestOfTheWeek(rightNow);
 	}
 	
-	
 }
