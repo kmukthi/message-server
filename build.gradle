@@ -13,28 +13,6 @@ repositories {
 	mavenCentral()
 }
 
-sourceSets {
-	unitTest {
-		compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-        java.srcDirs file('src/test/java/com/sweagle/messageserver/unittest')
-        
-    }
-
-    integrationTest {
-		compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-        java.srcDirs file('src/test/java/com/sweagle/messageserver/integrationtest')
-    }
-}
-
-configurations {
-    integrationTestImplementation.extendsFrom implementation
-    integrationTestRuntime.extendsFrom runtimeOnly
-    unitTestImplementation.extendsFrom implementation
-    unitTestRuntime.extendsFrom runtimeOnly
-}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
@@ -42,8 +20,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'io.springfox:springfox-swagger2:2.9.2'
    	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
-   	integrationTestCompile 'org.springframework.boot:spring-boot-starter-test'
-   	unitTestCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
@@ -53,28 +29,4 @@ test {
 		events "passed", "skipped", "failed"
 	}
 }
-
-task unitTest(type: Test) {
-    description = 'Runs unit tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.unitTest.output.classesDirs
-    classpath = sourceSets.unitTest.runtimeClasspath
-}
-
-task integrationTest(type: Test) {
-    description = 'Runs integration tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-    
-    shouldRunAfter unitTest
-}
-
-
-
-check.dependsOn integrationTest
-check.dependsOn unitTest
-
 
