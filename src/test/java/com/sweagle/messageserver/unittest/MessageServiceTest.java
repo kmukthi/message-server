@@ -2,8 +2,12 @@ package com.sweagle.messageserver.unittest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+
+import java.time.DayOfWeek;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,10 +63,47 @@ public class MessageServiceTest {
 		User validUser = Mockito.mock(User.class);
 		when(message.getSender()).thenReturn(senderEmail);
 		when(message.getReceiver()).thenReturn(receiverEmail);
+		when(message.getId()).thenReturn(null);
 		when(userService.findByEmailId(Mockito.anyString())).thenReturn(validUser);
 		when(messageRepository.save(message)).thenReturn(message);
 		Message savedMessage = messageService.saveMessage(message);
 		assertEquals(savedMessage, message);
+	}
+	
+	@Test
+	public void should_fail_while_saving_a_message_with_id() {
+		Message message = Mockito.mock(Message.class);
+		User validUser = Mockito.mock(User.class);
+		when(message.getSender()).thenReturn(senderEmail);
+		when(message.getReceiver()).thenReturn(receiverEmail);
+		when(message.getId()).thenReturn("some_id");
+		when(userService.findByEmailId(Mockito.anyString())).thenReturn(validUser);
+		assertThrows(IllegalArgumentException.class, () -> {
+			messageService.saveMessage(message);
+	    });
+	}
+	
+	@Test
+	public void should_return_zero_as_count_when_message_is_empty() {
+		when(messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Message>());
+		when(messageRepository.countOfMessagesFromDateTime(Mockito.any(Date.class))).thenReturn((long) 0);
+		long count = messageService.getProbableCountOfMessagesToSendForTheRestOfTheDay(ZonedDateTime.now());
+		assertEquals(count, 0);
+		count = messageService.getProbableCountOfMessagesToSendForTheRestOfTheWeek(ZonedDateTime.now());
+		assertEquals(count, 0);
+	}
+	
+	@Test
+	public void should_return_correct_message_count_when_previous_weeks_data_is_missing_but_current_days_message_is_present() {
+		ZonedDateTime rightNow = ZonedDateTime.now();
+		int diff =DayOfWeek.WEDNESDAY.compareTo(rightNow.getDayOfWeek());
+		ZonedDateTime wednesday = ZonedDateTime.of(rightNow.getYear(), rightNow.getMonthValue(), rightNow.plusDays(diff).getDayOfMonth(), 12, 0, 0, 0, rightNow.getZone());
+		when(messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Message>());
+		when(messageRepository.countOfMessagesFromDateTime(Mockito.any(Date.class))).thenReturn((long) 1);
+		long count = messageService.getProbableCountOfMessagesToSendForTheRestOfTheDay(wednesday);
+		assertEquals(count, 1);
+		count = messageService.getProbableCountOfMessagesToSendForTheRestOfTheWeek(wednesday);
+		assertEquals(count, 9);
 	}
 	
 	

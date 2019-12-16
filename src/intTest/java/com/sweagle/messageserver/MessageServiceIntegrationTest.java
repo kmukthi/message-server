@@ -150,12 +150,12 @@ public class MessageServiceIntegrationTest {
 	
 	private long getProbableCountOfMessagesToSendForTheRestOfTheDay(int hour) {
 		ZonedDateTime rightNow = createZonedDateAndTime(hour);
-		return messageService.probableCountOfMessagesToSendForTheRestOfTheDay(rightNow);
+		return messageService.getProbableCountOfMessagesToSendForTheRestOfTheDay(rightNow);
 	}
 	
 	private long getProbableCountOfMessagesToSendForTheRestOfTheWeek(int hour) {
 		ZonedDateTime rightNow = createZonedDateAndTime(hour);
-		return messageService.probableCountOfMessagesToSendForTheRestOfTheDay(rightNow);
+		return messageService.getProbableCountOfMessagesToSendForTheRestOfTheDay(rightNow);
 	}
 	
 	private ZonedDateTime createZonedDateAndTime(int hour) {
