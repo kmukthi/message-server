@@ -32,8 +32,7 @@ public class MessageServiceImpl implements MessageService {
 
 	@Override
 	public Message saveMessage(Message message) throws IllegalArgumentException {
-		checkUser(message.getSender(), SENDER);
-		checkUser(message.getReceiver(), RECEIVER);
+		validateMessage(message);
 		Date savedDate = message.getDate() == null ? new Date() : message.getDate();
 		message.setDate(savedDate);
 		return repository.save(message);
@@ -55,13 +54,13 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public long probableCountOfMessagesToSendForTheRestOfTheDay(ZonedDateTime rightNow) {
+	public long getProbableCountOfMessagesToSendForTheRestOfTheDay(ZonedDateTime rightNow) {
 		MessageInformation messageInformation = getMessageInformation(rightNow);
 		return messageInformation.getNumberOfMessageForTheRestOfTheday();
 	}
 
 	@Override
-	public long probableCountOfMessagesToSendForTheRestOfTheWeek(ZonedDateTime rightNow) {
+	public long getProbableCountOfMessagesToSendForTheRestOfTheWeek(ZonedDateTime rightNow) {
 		MessageInformation messageInformation = getMessageInformation(rightNow);
 		int remainingNumberOfDaysInCurrentWeek = calculateRemainingNumberOfDaysInCurrentWeek(rightNow);
 		return messageInformation.getNumberOfMessageForTheRestOfTheday() + messageInformation.getTotalNumberOfMessagesInaDay() * remainingNumberOfDaysInCurrentWeek;
@@ -181,6 +180,18 @@ public class MessageServiceImpl implements MessageService {
 	
 	private ZonedDateTime findBeginingOfTheDay(ZonedDateTime zonedDate) {
 		return zonedDate.toLocalDate().atStartOfDay().atZone(zonedDate.getZone());
+	}
+	
+	private void checkId(String id) {
+		if (id != null) {
+			throw new IllegalArgumentException("Message id is auto generated and should not be provided");
+		}
+	}
+	
+	private void validateMessage(Message message) {
+		checkUser(message.getSender(), SENDER);
+		checkUser(message.getReceiver(), RECEIVER);
+		checkId(message.getId());
 	}
 
 	

@@ -15,9 +15,9 @@ public interface MessageService {
 
 	Message getMessageById(String id);
 	
-	long probableCountOfMessagesToSendForTheRestOfTheDay(ZonedDateTime rightNow);
+	long getProbableCountOfMessagesToSendForTheRestOfTheDay(ZonedDateTime rightNow);
 	
-	long probableCountOfMessagesToSendForTheRestOfTheWeek(ZonedDateTime rightNow);
+	long getProbableCountOfMessagesToSendForTheRestOfTheWeek(ZonedDateTime rightNow);
 	
 	void deleteMessageBySender(String sender);
 	

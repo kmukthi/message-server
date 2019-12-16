@@ -16,6 +16,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User save(User user) {
+		validateUser(user);
 		userRepository.save(user);
 		return user;
 	}
@@ -35,4 +36,9 @@ public class UserServiceImpl implements UserService {
 		userRepository.deleteByEmailId(email);
 	}
 
+	private void validateUser(User user) {
+		if (user.getId() != null) {
+			throw new IllegalArgumentException("Id for the user is auto generated and should not be provided");
+		}
+	}
 }
