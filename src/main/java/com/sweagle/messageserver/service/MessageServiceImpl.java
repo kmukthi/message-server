@@ -19,7 +19,6 @@ import com.sweagle.messageserver.service.entity.MessageInformation;
 
 import org.slf4j.Logger;
 
-
 @Service
 public class MessageServiceImpl implements MessageService {
 	
