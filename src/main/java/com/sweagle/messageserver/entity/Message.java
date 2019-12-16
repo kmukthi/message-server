@@ -1,10 +1,8 @@
 package com.sweagle.messageserver.entity;
 
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class Message {
 	
@@ -40,8 +38,6 @@ public class Message {
 		this.content = content;
 		this.date = date;
 	}
-	
-	
 	
 	public String getId() {
 		return id;
@@ -81,7 +77,5 @@ public class Message {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
-	
 
 }
