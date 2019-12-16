@@ -27,7 +27,7 @@ public class MessageServiceImpl implements MessageService {
 	private static String RECEIVER = "Receiver";
 	
 	@Autowired
-	private MessageRepository repository;
+	private MessageRepository messageRepository;
 	
 	@Autowired
 	private UserService userService;
@@ -39,22 +39,22 @@ public class MessageServiceImpl implements MessageService {
 		validateMessage(message);
 		Date savedDate = message.getDate() == null ? new Date() : message.getDate();
 		message.setDate(savedDate);
-		return repository.save(message);
+		return messageRepository.save(message);
 	}
 
 	@Override
 	public List<Message> getMessagesReceivedByEmail(String email) {
-		return repository.findMessagesByReceiver(email);
+		return messageRepository.findMessagesByReceiver(email);
 	}
 
 	@Override
 	public List<Message> getMessagesSentByEmail(String email) {
-		return repository.findMessagesBySender(email);
+		return messageRepository.findMessagesBySender(email);
 	}
 
 	@Override
 	public Message getMessageById(String id) {
-		return repository.findById(id).get();
+		return messageRepository.findById(id).get();
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class MessageServiceImpl implements MessageService {
 	
 	@Override
 	public void deleteMessageBySender(String sender) {
-		repository.deleteBySender(sender);
+		messageRepository.deleteBySender(sender);
 		
 	}
 	
@@ -95,9 +95,9 @@ public class MessageServiceImpl implements MessageService {
 		long numberOfMsgsTillNow = 0;
 		final Date sevenDaysBefore = findLastWeeksDateFromNow(rightNow);
 		final Date beginningOfTheDay = findAndConvertIntoBeginningOfTheDay(rightNow);
-		final List<Message> messages = repository.listOfmessagesFromDateTimeAndBeforeEndDate(sevenDaysBefore, beginningOfTheDay);
+		final List<Message> messages = messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(sevenDaysBefore, beginningOfTheDay);
 		if (messages.isEmpty()) {
-			numberOfMsgsTillNow = repository.countOfMessagesFromDateTime(beginningOfTheDay);
+			numberOfMsgsTillNow = messageRepository.countOfMessagesFromDateTime(beginningOfTheDay);
 			totalNumberOfMessagesInaDay = calculateNumberOfMessagesInaDay(numberOfMsgsTillNow, rightNow);
 		} else {
 			Map<Integer, Long> bucketMap = createHourAndMessageCountBucketForTheLastWeek(rightNow, messages);
