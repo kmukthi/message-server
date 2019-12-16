@@ -9,12 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sweagle.messageserver.entity.Message;
 import com.sweagle.messageserver.repository.MessageRepository;
 import com.sweagle.messageserver.service.entity.MessageInformation;
+
+import org.slf4j.Logger;
 
 
 @Service
@@ -29,6 +32,8 @@ public class MessageServiceImpl implements MessageService {
 	
 	@Autowired
 	private UserService userService;
+	
+	private Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 
 	@Override
 	public Message saveMessage(Message message) throws IllegalArgumentException {
@@ -189,9 +194,15 @@ public class MessageServiceImpl implements MessageService {
 	}
 	
 	private void validateMessage(Message message) {
-		checkUser(message.getSender(), SENDER);
-		checkUser(message.getReceiver(), RECEIVER);
-		checkId(message.getId());
+		try {
+			checkUser(message.getSender(), SENDER);
+			checkUser(message.getReceiver(), RECEIVER);
+			checkId(message.getId());
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		}
+		
 	}
 
 	
