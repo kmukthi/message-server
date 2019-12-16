@@ -43,15 +43,15 @@ public class MessageController {
 		return messageService.getMessageById(id);
 	}
 	@RequestMapping(path ="/getProbableCountOfMessagesToSendForTheRestOfTheDay", method = RequestMethod.GET)
-	public long probableCountOfMessagesToSendForTheRestOfTheDay() {
+	public long getProbableCountOfMessagesToSendForTheRestOfTheDay() {
 		ZonedDateTime rightNow = ZonedDateTime.now();
-		return messageService.probableCountOfMessagesToSendForTheRestOfTheDay(rightNow);
+		return messageService.getProbableCountOfMessagesToSendForTheRestOfTheDay(rightNow);
 	}
 	
 	@RequestMapping(path ="/getProbableCountOfMessagesToSendForTheRestOfTheWeek", method = RequestMethod.GET)
-	public long probableCountOfMessagesToSendForTheRestOfTheWeek() {
+	public long getProbableCountOfMessagesToSendForTheRestOfTheWeek() {
 		ZonedDateTime rightNow = ZonedDateTime.now();
-		return messageService.probableCountOfMessagesToSendForTheRestOfTheWeek(rightNow);
+		return messageService.getProbableCountOfMessagesToSendForTheRestOfTheWeek(rightNow);
 	}
 	
 	

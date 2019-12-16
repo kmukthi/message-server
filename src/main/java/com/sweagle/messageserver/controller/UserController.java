@@ -27,8 +27,8 @@ public class UserController {
 		return userService.save(user);
 	}
 	
-	@RequestMapping(path = "/getById", method = RequestMethod.GET)
-	public User getUserById(@RequestParam("email") String email) {
+	@RequestMapping(path = "/getByEmail", method = RequestMethod.GET)
+	public User getByEmail(@RequestParam String email) {
 		return userService.findByEmailId(email);
 	}
 	
@@ -38,7 +38,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(path = "/deleteUser", method = RequestMethod.DELETE)
-	public void deleteUser(@RequestParam("email") String email) {
+	public void deleteUser(@RequestParam String email) {
 		userService.deleteByEmailId(email);
 	}
 	
