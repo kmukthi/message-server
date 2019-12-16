@@ -38,6 +38,10 @@ dependencies {
 task integrationTest(type: Test) {
     description = 'Runs integration tests.'
     group = 'verification'
+    
+    testLogging {
+		events "passed", "skipped", "failed"
+	}
 
     testClassesDirs = sourceSets.intTest.output.classesDirs
     classpath = sourceSets.intTest.runtimeClasspath
