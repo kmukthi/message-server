@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.sweagle.messageserver.entity.CachedData;
 import com.sweagle.messageserver.entity.Message;
 import com.sweagle.messageserver.entity.User;
+import com.sweagle.messageserver.repository.MessageRepository;
 import com.sweagle.messageserver.service.MessageService;
 import com.sweagle.messageserver.service.UserService;
 
@@ -32,6 +36,12 @@ public class MessageServiceIntegrationTest {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private MessageRepository messageRepository;
+	
+	@Resource(name = "applicationScopedBean")
+    private CachedData applicationScopedBean;
 	
 	private static int[] numberOFmsgs = {20, 14, 42, 70};
 	
@@ -178,6 +188,10 @@ public class MessageServiceIntegrationTest {
 				messageService.saveMessage(message);
 			}
 		}
+		final Date sevenDaysBefore = messageService.findLastWeeksDateFromNow(rightNow);
+		final Date beginningOfTheDay = messageService.findAndConvertIntoBeginningOfTheDay(rightNow);
+		final List<Message> messages = messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(sevenDaysBefore, beginningOfTheDay);
+		applicationScopedBean.setBucketMap(messageService.createHourAndMessageCountBucketForTheLastWeek(rightNow, messages));
 	}
 	
 	private void createSenderAndUser(String senderEmail, String receverEmail) {

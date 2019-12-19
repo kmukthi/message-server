@@ -9,10 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.ApplicationScope;
 
+import com.sweagle.messageserver.entity.CachedData;
 import com.sweagle.messageserver.entity.Message;
 import com.sweagle.messageserver.repository.MessageRepository;
 import com.sweagle.messageserver.service.entity.MessageInformation;
@@ -76,6 +81,9 @@ public class MessageServiceImpl implements MessageService {
 		
 	}
 	
+	@Resource(name = "applicationScopedBean")
+    private CachedData applicationScopedBean;
+	
 	private int calculateRemainingNumberOfDaysInCurrentWeek(ZonedDateTime rightNow) {
 		int dayDiff = DayOfWeek.SUNDAY.getValue() - rightNow.getDayOfWeek().getValue();
 		return dayDiff;
@@ -93,14 +101,15 @@ public class MessageServiceImpl implements MessageService {
 		long numberOfMessageForTheRestOfTheday = 0;
 		long totalNumberOfMessagesInaDay = 0;
 		long numberOfMsgsTillNow = 0;
-		final Date sevenDaysBefore = findLastWeeksDateFromNow(rightNow);
+		//final Date sevenDaysBefore = findLastWeeksDateFromNow(rightNow);
 		final Date beginningOfTheDay = findAndConvertIntoBeginningOfTheDay(rightNow);
-		final List<Message> messages = messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(sevenDaysBefore, beginningOfTheDay);
-		if (messages.isEmpty()) {
+		//final List<Message> messages = messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(sevenDaysBefore, beginningOfTheDay);
+		if (applicationScopedBean.getBucketMap().isEmpty()) {
 			numberOfMsgsTillNow = messageRepository.countOfMessagesFromDateTime(beginningOfTheDay);
 			totalNumberOfMessagesInaDay = calculateNumberOfMessagesInaDay(numberOfMsgsTillNow, rightNow);
 		} else {
-			Map<Integer, Long> bucketMap = createHourAndMessageCountBucketForTheLastWeek(rightNow, messages);
+			//Map<Integer, Long> bucketMap = createHourAndMessageCountBucketForTheLastWeek(rightNow, messages);
+			Map<Integer, Long> bucketMap = applicationScopedBean.getBucketMap();
 			final int pos = rightNow.getHour()/6;
 			numberOfMsgsTillNow = calculateNumberOfMessagesFromBeginingOfTheDayTillNow(pos, rightNow, bucketMap);
 			totalNumberOfMessagesInaDay = bucketMap.values().stream().reduce((long) 0, Long::sum);
@@ -142,7 +151,8 @@ public class MessageServiceImpl implements MessageService {
 		return numberOfMsgs;
 	}
 	
-	private Date findLastWeeksDateFromNow(ZonedDateTime rightNow) {
+	@Override
+	public Date findLastWeeksDateFromNow(ZonedDateTime rightNow) {
 		ZonedDateTime aWeekBack = rightNow.minusDays(7);
 		ZonedDateTime start = findBeginingOfTheDay(aWeekBack);
 		return convertZonedDateTimeToJavaUtilDate(start);
@@ -152,7 +162,8 @@ public class MessageServiceImpl implements MessageService {
 		return Date.from(zonedDateTime.toInstant());
 	}
 	
-	private Map<Integer, Long> createHourAndMessageCountBucketForTheLastWeek(ZonedDateTime rightNow, List<Message> messages) {
+	@Override
+	public Map<Integer, Long> createHourAndMessageCountBucketForTheLastWeek(ZonedDateTime rightNow, List<Message> messages) {
 		Map<Integer, Long> bucketMap = new HashMap<>();
 		for(int i : hourArr) {
 			bucketMap.put(i, (long) 0);
@@ -177,7 +188,8 @@ public class MessageServiceImpl implements MessageService {
 		});
 	}
 	
-	private Date findAndConvertIntoBeginningOfTheDay(ZonedDateTime rightNow) {
+	@Override
+	public Date findAndConvertIntoBeginningOfTheDay(ZonedDateTime rightNow) {
 		ZonedDateTime startOfTheDay = findBeginingOfTheDay(rightNow);
 		return convertZonedDateTimeToJavaUtilDate(startOfTheDay);
 	}
