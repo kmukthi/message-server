@@ -101,9 +101,7 @@ public class MessageServiceImpl implements MessageService {
 		long numberOfMessageForTheRestOfTheday = 0;
 		long totalNumberOfMessagesInaDay = 0;
 		long numberOfMsgsTillNow = 0;
-		//final Date sevenDaysBefore = findLastWeeksDateFromNow(rightNow);
 		final Date beginningOfTheDay = findAndConvertIntoBeginningOfTheDay(rightNow);
-		//final List<Message> messages = messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(sevenDaysBefore, beginningOfTheDay);
 		if (applicationScopedBean.getBucketMap().isEmpty()) {
 			numberOfMsgsTillNow = messageRepository.countOfMessagesFromDateTime(beginningOfTheDay);
 			totalNumberOfMessagesInaDay = calculateNumberOfMessagesInaDay(numberOfMsgsTillNow, rightNow);
