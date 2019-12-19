@@ -41,7 +41,6 @@ public class StartUpInit {
 	
 	private void setUpDataRefresh() {
 		Runnable runnable = () -> initialiseCache();
-		//long period = Duration.ofMinutes(1).toMillis();
 		long period = Duration.ofMinutes(24).toMillis();
 		ZonedDateTime rightNow = ZonedDateTime.now();
 		ZonedDateTime temp = rightNow.plusDays(1);

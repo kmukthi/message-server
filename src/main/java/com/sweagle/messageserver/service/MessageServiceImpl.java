@@ -106,7 +106,6 @@ public class MessageServiceImpl implements MessageService {
 			numberOfMsgsTillNow = messageRepository.countOfMessagesFromDateTime(beginningOfTheDay);
 			totalNumberOfMessagesInaDay = calculateNumberOfMessagesInaDay(numberOfMsgsTillNow, rightNow);
 		} else {
-			//Map<Integer, Long> bucketMap = createHourAndMessageCountBucketForTheLastWeek(rightNow, messages);
 			Map<Integer, Long> bucketMap = applicationScopedBean.getBucketMap();
 			final int pos = rightNow.getHour()/6;
 			numberOfMsgsTillNow = calculateNumberOfMessagesFromBeginingOfTheDayTillNow(pos, rightNow, bucketMap);
