@@ -8,6 +8,7 @@ import java.time.DayOfWeek;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.sweagle.messageserver.entity.CachedData;
 import com.sweagle.messageserver.entity.Message;
 import com.sweagle.messageserver.entity.User;
 import com.sweagle.messageserver.repository.MessageRepository;
@@ -45,6 +47,9 @@ public class MessageServiceTest {
 	
 	@Mock
 	private UserService userService;
+	
+	@Mock
+	private CachedData cachedData;
 	
 	@Test
 	public void should_fail_when_message_is_saved_with_invalid_user() {
@@ -85,7 +90,7 @@ public class MessageServiceTest {
 	
 	@Test
 	public void should_return_zero_as_count_when_message_is_empty() {
-		when(messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Message>());
+		when(cachedData.getBucketMap()).thenReturn(new HashMap<>());
 		when(messageRepository.countOfMessagesFromDateTime(Mockito.any(Date.class))).thenReturn((long) 0);
 		long count = messageService.getProbableCountOfMessagesToSendForTheRestOfTheDay(ZonedDateTime.now());
 		assertEquals(count, 0);
@@ -98,7 +103,7 @@ public class MessageServiceTest {
 		ZonedDateTime rightNow = ZonedDateTime.now();
 		int diff =DayOfWeek.WEDNESDAY.compareTo(rightNow.getDayOfWeek());
 		ZonedDateTime wednesday = ZonedDateTime.of(rightNow.getYear(), rightNow.getMonthValue(), rightNow.plusDays(diff).getDayOfMonth(), 12, 0, 0, 0, rightNow.getZone());
-		when(messageRepository.listOfmessagesFromDateTimeAndBeforeEndDate(Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Message>());
+		when(cachedData.getBucketMap()).thenReturn(new HashMap<>());
 		when(messageRepository.countOfMessagesFromDateTime(Mockito.any(Date.class))).thenReturn((long) 1);
 		long count = messageService.getProbableCountOfMessagesToSendForTheRestOfTheDay(wednesday);
 		assertEquals(count, 1);
